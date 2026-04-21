@@ -35,7 +35,7 @@ export interface AirQuality {
   pm25: number;
   pm10: number;
   ozone: number;
-  category: 'Good' | 'Moderate' | 'Unhealthy' | 'Very Unhealthy' | 'Hazardous';
+  category: 'Bom' | 'Moderado' | 'Ruim' | 'Muito Ruim' | 'Perigoso';
   color: string;
 }
 

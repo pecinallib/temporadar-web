@@ -14,7 +14,7 @@ import { getWeatherInfo } from '../../../../core/services';
                  text-tr-ink dark:text-tr-dark-ink tracking-tight
                  flex justify-between items-baseline mb-4"
       >
-        Seven days ahead
+        Próximos 7 dias
         <span
           class="font-inter text-[11px] tracking-widest uppercase
                      text-tr-ink-mute dark:text-tr-dark-mute font-medium"
@@ -45,7 +45,7 @@ import { getWeatherInfo } from '../../../../core/services';
                   : 'text-tr-ink-soft dark:text-tr-dark-soft'
               "
             >
-              {{ i === 0 ? 'Today' : getDayName(day.date) }}
+              {{ i === 0 ? 'Hoje' : getDayName(day.date) }}
             </span>
 
             <!-- Temp max -->
@@ -68,7 +68,7 @@ import { getWeatherInfo } from '../../../../core/services';
                   : 'text-tr-ink-mute dark:text-tr-dark-mute'
               "
             >
-              Low {{ day.tempMin }}°
+              Baixa {{ day.tempMin }}°
             </span>
 
             <!-- Condição -->
@@ -108,16 +108,20 @@ export class ForecastStripComponent {
   }
 
   getDayName(dateStr: string): string {
-    return new Date(dateStr).toLocaleDateString('en', { weekday: 'short' });
+    return new Date(dateStr)
+      .toLocaleDateString('pt-BR', { weekday: 'short' })
+      .replace('.', '')
+      .toUpperCase();
   }
 
   get dateRange(): string {
     if (!this.data) return '';
-    const first = new Date(this.data.daily[0].date);
-    const last = new Date(this.data.daily[6].date);
-    const fmt = (d: Date) =>
-      `${d.getDate()} ${d.toLocaleDateString('en', { month: 'short' }).toUpperCase()}`;
-    return `${fmt(first)} – ${fmt(last)}`;
+    const fmt = (dateStr: string) => {
+      const [year, month, day] = dateStr.split('-').map(Number);
+      const d = new Date(year, month - 1, day);
+      return `${d.getDate()} ${d.toLocaleDateString('en', { month: 'short' }).toUpperCase()}`;
+    };
+    return `${fmt(this.data.daily[0].date)} – ${fmt(this.data.daily[6].date)}`;
   }
 
   getDayClass(i: number): string {

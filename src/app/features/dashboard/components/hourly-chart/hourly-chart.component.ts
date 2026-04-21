@@ -18,12 +18,12 @@ import { WeatherData } from '../../../../core/models';
                  text-tr-ink dark:text-tr-dark-ink tracking-tight
                  flex justify-between items-baseline mb-5"
       >
-        Next 8 hours
+        Próximas 8 horas
         <span
           class="font-inter text-[11px] tracking-widest uppercase
                      text-tr-ink-mute dark:text-tr-dark-mute font-medium"
         >
-          Temperature · °C
+          Temperatura · °C
         </span>
       </h2>
 

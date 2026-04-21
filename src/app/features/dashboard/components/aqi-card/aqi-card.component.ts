@@ -19,12 +19,12 @@ import { WeatherData } from '../../../../core/models';
                  text-tr-ink dark:text-tr-dark-ink tracking-tight
                  flex justify-between items-baseline"
       >
-        Air quality
+        Qualidade do Ar
         <span
           class="font-inter text-[11px] tracking-widest uppercase
                      text-tr-ink-mute dark:text-tr-dark-mute font-medium"
         >
-          {{ data.location.city }} station
+          {{ data.location.city }} estação
         </span>
       </h2>
 
@@ -52,9 +52,9 @@ import { WeatherData } from '../../../../core/models';
             class="block font-playfair text-xl italic font-medium mb-1"
             [style.color]="data.airQuality.color"
           >
-            {{ data.airQuality.category }} — fresh air
+            {{ data.airQuality.category }} — ar puro
           </b>
-          Breathe easy. Ideal conditions for outdoor activities.
+          Ar limpo. Condições ideais para atividades ao ar livre.
         </div>
       </div>
 
@@ -75,10 +75,10 @@ import { WeatherData } from '../../../../core/models';
         class="flex justify-between text-[10.5px] tracking-widest
                   uppercase text-tr-ink-mute dark:text-tr-dark-mute font-medium -mt-3"
       >
-        <span>Good</span>
-        <span>Moderate</span>
-        <span>Unhealthy</span>
-        <span>Hazardous</span>
+        <span>Bom</span>
+        <span>Moderado</span>
+        <span>Ruim</span>
+        <span>Perigoso</span>
       </div>
 
       <!-- Breakdown -->
@@ -124,8 +124,8 @@ export class AqiCardComponent {
     return [
       { label: 'PM 2.5', value: pm25.toFixed(1), unit: 'μg/m³' },
       { label: 'PM 10', value: pm10.toFixed(1), unit: 'μg/m³' },
-      { label: 'Ozone', value: ozone.toFixed(0), unit: 'ppb' },
-      { label: 'Pollen', value: 'Low', unit: '' },
+      { label: 'Ozônio', value: ozone.toFixed(0), unit: 'ppb' },
+      { label: 'Pólen', value: 'Baixo', unit: '' },
     ];
   }
 }

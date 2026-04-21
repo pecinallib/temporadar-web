@@ -11,7 +11,6 @@ import {
   SunTimes,
   Location,
 } from '../models';
-import { getWeatherInfo } from './weather-codes';
 
 @Injectable({ providedIn: 'root' })
 export class WeatherService {
@@ -86,25 +85,31 @@ export class WeatherService {
       isDay: c.is_day === 1,
     };
 
-    const now = new Date();
+    const nowHour = new Date().getHours();
     const hourly: HourlyForecast[] = w.hourly.time
-      .slice(0, 24)
+      .slice(nowHour, nowHour + 8)
       .map((time: string, i: number) => ({
         time,
-        temperature: Math.round(w.hourly.temperature_2m[i]),
-        weatherCode: w.hourly.weather_code[i],
-        precipitation: w.hourly.precipitation_probability[i],
+        temperature: Math.round(w.hourly.temperature_2m[nowHour + i]),
+        weatherCode: w.hourly.weather_code[nowHour + i],
+        precipitation: w.hourly.precipitation_probability[nowHour + i],
       }));
 
-    const daily: DailyForecast[] = w.daily.time.map(
-      (date: string, i: number) => ({
+    const now = new Date();
+    const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+
+    const todayIndex = w.daily.time.findIndex((d: string) => d === today);
+    const startIndex = todayIndex >= 0 ? todayIndex : 0;
+    const daily: DailyForecast[] = w.daily.time
+      .slice(startIndex, startIndex + 7)
+      .map((date: string, i: number) => ({
         date,
-        tempMax: Math.round(w.daily.temperature_2m_max[i]),
-        tempMin: Math.round(w.daily.temperature_2m_min[i]),
-        weatherCode: w.daily.weather_code[i],
-        precipitationProbability: w.daily.precipitation_probability_max[i],
-      }),
-    );
+        tempMax: Math.round(w.daily.temperature_2m_max[startIndex + i]),
+        tempMin: Math.round(w.daily.temperature_2m_min[startIndex + i]),
+        weatherCode: w.daily.weather_code[startIndex + i],
+        precipitationProbability:
+          w.daily.precipitation_probability_max[startIndex + i],
+      }));
 
     const aqi = a.current.european_aqi;
     const airQuality: AirQuality = {
@@ -127,11 +132,11 @@ export class WeatherService {
     category: AirQuality['category'];
     color: string;
   } {
-    if (aqi <= 20) return { category: 'Good', color: '#7a9e7e' };
-    if (aqi <= 40) return { category: 'Good', color: '#7a9e7e' };
-    if (aqi <= 60) return { category: 'Moderate', color: '#f5c57a' };
-    if (aqi <= 80) return { category: 'Unhealthy', color: '#c1694f' };
-    if (aqi <= 100) return { category: 'Very Unhealthy', color: '#9b4dca' };
-    return { category: 'Hazardous', color: '#7b0d1e' };
+    if (aqi <= 20) return { category: 'Bom', color: '#7a9e7e' };
+    if (aqi <= 40) return { category: 'Bom', color: '#7a9e7e' };
+    if (aqi <= 60) return { category: 'Moderado', color: '#f5c57a' };
+    if (aqi <= 80) return { category: 'Ruim', color: '#c1694f' };
+    if (aqi <= 100) return { category: 'Muito Ruim', color: '#9b4dca' };
+    return { category: 'Perigoso', color: '#7b0d1e' };
   }
 }

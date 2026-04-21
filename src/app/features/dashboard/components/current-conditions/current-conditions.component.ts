@@ -20,7 +20,7 @@ import { getWeatherInfo } from '../../../../core/services';
           class="text-[11px] tracking-widest uppercase
                      text-tr-ink-mute dark:text-tr-dark-mute font-medium"
         >
-          Current Temperature
+          Temperatura Atual
         </span>
         <div
           class="flex items-center gap-2 text-sm
@@ -36,16 +36,16 @@ import { getWeatherInfo } from '../../../../core/services';
       </div>
 
       <!-- Temperatura grande -->
-      <div class="flex items-start leading-none -mt-2">
+      <div class="leading-none -mt-6 mb-6 flex items-start">
         <span
-          class="font-playfair text-temp-lg md:text-temp-md
-                     text-tr-ink dark:text-tr-dark-ink tracking-tight"
+          class="font-playfair text-tr-ink dark:text-tr-dark-ink tracking-tight"
+          style="font-size: 130px; line-height: 1;"
         >
           {{ data.current.temperature }}
         </span>
         <span
-          class="font-playfair text-[56px] mt-3 ml-1
-                     text-tr-terra dark:text-tr-terra"
+          class="font-playfair text-tr-terra mt-4"
+          style="font-size: 48px; line-height: 1;"
         >
           °
         </span>
@@ -57,7 +57,7 @@ import { getWeatherInfo } from '../../../../core/services';
                   text-tr-ink-soft dark:text-tr-dark-soft"
       >
         <span>
-          Feels like
+          Sensação
           <b class="text-tr-ink dark:text-tr-dark-ink font-medium">
             {{ data.current.feelsLike }}°
           </b>
@@ -96,7 +96,7 @@ import { getWeatherInfo } from '../../../../core/services';
               class="text-[10.5px] tracking-widest uppercase
                           text-tr-ink-soft dark:text-tr-dark-soft font-medium"
             >
-              Humidity
+              UMIDADE
             </small>
             <span
               class="font-playfair text-[22px] font-medium
@@ -128,7 +128,7 @@ import { getWeatherInfo } from '../../../../core/services';
               class="text-[10.5px] tracking-widest uppercase
                           text-tr-ink-soft dark:text-tr-dark-soft font-medium"
             >
-              Wind
+              VENTO
             </small>
             <span
               class="font-playfair text-[22px] font-medium
@@ -160,7 +160,7 @@ import { getWeatherInfo } from '../../../../core/services';
               class="text-[10.5px] tracking-widest uppercase
                           text-tr-ink-soft dark:text-tr-dark-soft font-medium"
             >
-              UV Index
+              ÍNDICE UV
             </small>
             <span
               class="font-playfair text-[22px] font-medium
@@ -187,7 +187,7 @@ import { getWeatherInfo } from '../../../../core/services';
               class="text-[10.5px] tracking-widest uppercase
                           text-tr-ink-soft dark:text-tr-dark-soft font-medium"
             >
-              Visibility
+              VISIBILIDADE
             </small>
             <span
               class="font-playfair text-[22px] font-medium
