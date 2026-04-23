@@ -29,7 +29,7 @@ import { getWeatherInfo } from '../../../../core/services';
             *ngFor="let day of data.daily; let i = index"
             [class]="getDayClass(i)"
             class="relative rounded-[26px] p-4 flex flex-col gap-2.5
-                      transition-transform duration-300 hover:-translate-y-1 cursor-default"
+             transition-transform duration-300 hover:-translate-y-1 cursor-default"
           >
             <!-- Ícone -->
             <span class="absolute top-3.5 right-3.5 text-xl">
@@ -48,10 +48,21 @@ import { getWeatherInfo } from '../../../../core/services';
               {{ i === 0 ? 'Hoje' : getDayName(day.date) }}
             </span>
 
+            <!-- Data pequena -->
+            <span
+              class="text-[10px]"
+              [class]="
+                i === 0
+                  ? 'text-[#c5b299]'
+                  : 'text-tr-ink-mute dark:text-tr-dark-mute'
+              "
+            >
+              {{ getShortDate(day.date) }}
+            </span>
+
             <!-- Temp max -->
             <span
-              class="font-playfair text-[34px] font-medium
-                         leading-none tracking-tight"
+              class="font-playfair text-[34px] font-medium leading-none tracking-tight"
               [class]="
                 i === 0 ? 'text-tr-cream' : 'text-tr-ink dark:text-tr-dark-ink'
               "
@@ -113,8 +124,16 @@ export class ForecastStripComponent {
     return getWeatherInfo(code);
   }
 
+  getShortDate(dateStr: string): string {
+    const [year, month, day] = dateStr.split('-').map(Number);
+    const d = new Date(year, month - 1, day);
+    return `${d.getDate()} ${d.toLocaleDateString('pt-BR', { month: 'short' }).replace('.', '')}`;
+  }
+
   getDayName(dateStr: string): string {
-    return new Date(dateStr)
+    const [year, month, day] = dateStr.split('-').map(Number);
+    const d = new Date(year, month - 1, day);
+    return d
       .toLocaleDateString('pt-BR', { weekday: 'short' })
       .replace('.', '')
       .toUpperCase();
