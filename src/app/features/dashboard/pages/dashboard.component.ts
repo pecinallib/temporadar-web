@@ -7,12 +7,27 @@ import { HourlyChartComponent } from '../components/hourly-chart/hourly-chart.co
 import { AqiCardComponent } from '../components/aqi-card/aqi-card.component';
 import { ForecastStripComponent } from '../components/forecast-strip/forecast-strip.component';
 import {
+  TabBarComponent,
+  TabType,
+} from '../components/tab-bar/tab-bar.component';
+import { MarineConditionsComponent } from '../components/marine/marine-conditions.component';
+import { MarineChartComponent } from '../components/marine/marine-chart.component';
+import { HistoricalChartComponent } from '../components/historical/historical-chart.component';
+import { MapFullComponent } from '../components/map-full/map-full.component';
+import {
   WeatherService,
   LocationService,
   GeocodingService,
   ThemeService,
+  MarineService,
+  HistoricalService,
 } from '../../../core/services';
-import { WeatherData, Location } from '../../../core/models';
+import {
+  WeatherData,
+  Location,
+  MarineData,
+  HistoricalSummary,
+} from '../../../core/models';
 import { switchMap } from 'rxjs/operators';
 
 @Component({
@@ -26,6 +41,11 @@ import { switchMap } from 'rxjs/operators';
     HourlyChartComponent,
     AqiCardComponent,
     ForecastStripComponent,
+    TabBarComponent,
+    MarineConditionsComponent,
+    MarineChartComponent,
+    HistoricalChartComponent,
+    MapFullComponent,
   ],
   template: `
     <div
@@ -75,12 +95,10 @@ import { switchMap } from 'rxjs/operators';
               <span>{{ today }}</span>
               <span class="w-1 h-1 rounded-full bg-tr-ink-mute"></span>
               <span
-                >Horário local:
-                <b
-                  class="text-tr-ink dark:text-tr-dark-ink
-                                        font-medium"
-                  >{{ time }}</b
-                ></span
+                >Horário local
+                <b class="text-tr-ink dark:text-tr-dark-ink font-medium">{{
+                  time
+                }}</b></span
               >
               <span class="w-1 h-1 rounded-full bg-tr-ink-mute"></span>
               <span>{{ currentConditionLabel }}</span>
@@ -134,8 +152,8 @@ import { switchMap } from 'rxjs/operators';
               >
                 <div
                   class="absolute top-[3px] w-6 h-6 rounded-full
-                            grid place-items-center text-xs
-                            shadow-md transition-all duration-300"
+                            grid place-items-center text-xs shadow-md
+                            transition-all duration-300"
                   [class]="
                     theme.isDark()
                       ? 'translate-x-[43px] bg-tr-sage text-tr-dark-bg'
@@ -165,7 +183,7 @@ import { switchMap } from 'rxjs/operators';
           </div>
         </div>
 
-        <!-- Loading state -->
+        <!-- Loading -->
         <div
           *ngIf="loading"
           class="flex items-center justify-center py-32
@@ -174,8 +192,7 @@ import { switchMap } from 'rxjs/operators';
           <div class="flex flex-col items-center gap-4">
             <div
               class="w-10 h-10 rounded-full border-2
-                        border-tr-terra border-t-transparent
-                        animate-spin"
+                        border-tr-terra border-t-transparent animate-spin"
             ></div>
             <span class="font-inter text-sm tracking-wide">
               Carregando dados do clima...
@@ -183,21 +200,86 @@ import { switchMap } from 'rxjs/operators';
           </div>
         </div>
 
-        <!-- Main grid -->
+        <!-- Conteúdo principal -->
         <div *ngIf="!loading && weatherData">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-7">
-            <app-weather-map [data]="weatherData"></app-weather-map>
-            <app-current-conditions
-              [data]="weatherData"
-            ></app-current-conditions>
+          <!-- Tab bar -->
+          <div class="mb-7">
+            <app-tab-bar
+              [activeTab]="activeTab"
+              (tabChanged)="onTabChanged($event)"
+            >
+            </app-tab-bar>
           </div>
 
-          <div class="grid grid-cols-1 md:grid-cols-[1.35fr_1fr] gap-7 mt-7">
-            <app-hourly-chart [data]="weatherData"></app-hourly-chart>
-            <app-aqi-card [data]="weatherData"></app-aqi-card>
+          <!-- ABA: Clima -->
+          <div [hidden]="activeTab !== 'clima'">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-7">
+              <app-weather-map [data]="weatherData"></app-weather-map>
+              <app-current-conditions
+                [data]="weatherData"
+              ></app-current-conditions>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-[1.35fr_1fr] gap-7 mt-7">
+              <app-hourly-chart [data]="weatherData"></app-hourly-chart>
+              <app-aqi-card [data]="weatherData"></app-aqi-card>
+            </div>
+            <app-forecast-strip [data]="weatherData"></app-forecast-strip>
           </div>
 
-          <app-forecast-strip [data]="weatherData"></app-forecast-strip>
+          <!-- ABA: Marine -->
+          <div [hidden]="activeTab !== 'marine'">
+            <div
+              *ngIf="loadingMarine"
+              class="flex items-center justify-center py-32
+                        text-tr-ink-soft dark:text-tr-dark-soft"
+            >
+              <div class="flex flex-col items-center gap-4">
+                <div
+                  class="w-10 h-10 rounded-full border-2
+                            border-tr-sky border-t-transparent animate-spin"
+                ></div>
+                <span class="font-inter text-sm"
+                  >Carregando dados do mar...</span
+                >
+              </div>
+            </div>
+            <div
+              *ngIf="!loadingMarine && marineData"
+              class="flex flex-col gap-7"
+            >
+              <app-marine-conditions
+                [data]="marineData"
+              ></app-marine-conditions>
+              <app-marine-chart [data]="marineData"></app-marine-chart>
+            </div>
+          </div>
+
+          <!-- ABA: Histórico -->
+          <div [hidden]="activeTab !== 'historico'">
+            <div
+              *ngIf="loadingHistorical"
+              class="flex items-center justify-center py-32
+                        text-tr-ink-soft dark:text-tr-dark-soft"
+            >
+              <div class="flex flex-col items-center gap-4">
+                <div
+                  class="w-10 h-10 rounded-full border-2
+                            border-tr-sage border-t-transparent animate-spin"
+                ></div>
+                <span class="font-inter text-sm">Carregando histórico...</span>
+              </div>
+            </div>
+            <div *ngIf="!loadingHistorical && historicalData">
+              <app-historical-chart
+                [data]="historicalData"
+              ></app-historical-chart>
+            </div>
+          </div>
+
+          <!-- ABA: Mapa -->
+          <div [hidden]="activeTab !== 'mapa'">
+            <app-map-full [data]="weatherData"></app-map-full>
+          </div>
 
           <!-- Footer -->
           <div
@@ -207,8 +289,7 @@ import { switchMap } from 'rxjs/operators';
             <span>TempoRadar v1.0 · Open-Meteo + Nominatim</span>
             <a
               (click)="loadByLocation()"
-              class="text-tr-terra cursor-pointer
-                                                  hover:opacity-70 transition-opacity"
+              class="text-tr-terra cursor-pointer hover:opacity-70 transition-opacity"
             >
               alterar localização
             </a>
@@ -220,7 +301,14 @@ import { switchMap } from 'rxjs/operators';
 })
 export class DashboardComponent implements OnInit {
   weatherData: WeatherData | null = null;
+  marineData: MarineData | null = null;
+  historicalData: HistoricalSummary | null = null;
+
   loading = true;
+  loadingMarine = false;
+  loadingHistorical = false;
+
+  activeTab: TabType = 'clima';
   unit: 'C' | 'F' = 'C';
   time = '';
   today = '';
@@ -229,6 +317,8 @@ export class DashboardComponent implements OnInit {
     private weather: WeatherService,
     private location: LocationService,
     private geocoding: GeocodingService,
+    private marine: MarineService,
+    private historical: HistoricalService,
     public theme: ThemeService,
   ) {}
 
@@ -240,6 +330,10 @@ export class DashboardComponent implements OnInit {
 
   loadByLocation(): void {
     this.loading = true;
+    this.marineData = null;
+    this.historicalData = null;
+    this.activeTab = 'clima';
+
     this.location
       .getLocation()
       .pipe(
@@ -266,6 +360,10 @@ export class DashboardComponent implements OnInit {
 
   onLocationSelected(loc: Location): void {
     this.loading = true;
+    this.marineData = null;
+    this.historicalData = null;
+    this.activeTab = 'clima';
+
     this.weather.getWeatherData(loc.lat, loc.lon, loc).subscribe({
       next: (data) => {
         this.weatherData = data;
@@ -275,6 +373,47 @@ export class DashboardComponent implements OnInit {
         this.loading = false;
       },
     });
+  }
+
+  onTabChanged(tab: TabType): void {
+    this.activeTab = tab;
+    setTimeout(() => window.dispatchEvent(new Event('resize')), 200);
+
+    if (tab === 'marine' && !this.marineData && this.weatherData) {
+      this.loadingMarine = true;
+      this.marine
+        .getMarineData(
+          this.weatherData.location.lat,
+          this.weatherData.location.lon,
+        )
+        .subscribe({
+          next: (data) => {
+            this.marineData = data;
+            this.loadingMarine = false;
+          },
+          error: () => {
+            this.loadingMarine = false;
+          },
+        });
+    }
+
+    if (tab === 'historico' && !this.historicalData && this.weatherData) {
+      this.loadingHistorical = true;
+      this.historical
+        .getHistoricalSummary(
+          this.weatherData.location.lat,
+          this.weatherData.location.lon,
+        )
+        .subscribe({
+          next: (data) => {
+            this.historicalData = data;
+            this.loadingHistorical = false;
+          },
+          error: () => {
+            this.loadingHistorical = false;
+          },
+        });
+    }
   }
 
   get currentConditionLabel(): string {
@@ -296,11 +435,11 @@ export class DashboardComponent implements OnInit {
 
   private updateClock(): void {
     const now = new Date();
-    this.time = now.toLocaleTimeString('en', {
+    this.time = now.toLocaleTimeString('pt-BR', {
       hour: '2-digit',
       minute: '2-digit',
     });
-    this.today = now.toLocaleDateString('en', {
+    this.today = now.toLocaleDateString('pt-BR', {
       weekday: 'long',
       day: 'numeric',
       month: 'long',

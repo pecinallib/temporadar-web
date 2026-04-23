@@ -99,18 +99,26 @@ export class WeatherMapComponent
   private map!: L.Map;
   private marker!: L.Marker;
 
+  private resizeObserver!: ResizeObserver;
+
   ngAfterViewInit(): void {
-    this.initMap();
+    setTimeout(() => {
+      this.initMap();
+      setTimeout(() => {
+        this.map.invalidateSize(true);
+      }, 400);
+    }, 300);
+  }
+
+  ngOnDestroy(): void {
+    if (this.map) this.map.remove();
+    if (this.resizeObserver) this.resizeObserver.disconnect();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['data'] && this.data && this.map) {
       this.updateMap();
     }
-  }
-
-  ngOnDestroy(): void {
-    if (this.map) this.map.remove();
   }
 
   private initMap(): void {
