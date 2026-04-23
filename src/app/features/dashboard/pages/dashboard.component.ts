@@ -29,6 +29,7 @@ import {
   HistoricalSummary,
 } from '../../../core/models';
 import { switchMap } from 'rxjs/operators';
+import { BackgroundEffectComponent } from '../components/background-effect/background-effect.component';
 
 @Component({
   selector: 'app-dashboard',
@@ -46,6 +47,7 @@ import { switchMap } from 'rxjs/operators';
     MarineChartComponent,
     HistoricalChartComponent,
     MapFullComponent,
+    BackgroundEffectComponent,
   ],
   template: `
     <div
@@ -53,6 +55,7 @@ import { switchMap } from 'rxjs/operators';
    bg-gradient-to-b from-tr-peach/55 via-[#f9d9c4]/55 to-tr-cream/55
    dark:from-tr-dark-sand/55 dark:via-tr-dark-card/55 dark:to-tr-dark-bg/55"
     >
+      <app-background-effect></app-background-effect>
       <div
         class="max-w-[1240px] mx-auto px-6 md:px-12 py-10 pb-16 relative z-10"
       >
