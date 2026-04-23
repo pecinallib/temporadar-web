@@ -29,6 +29,8 @@ import {
   HistoricalSummary,
 } from '../../../core/models';
 import { switchMap } from 'rxjs/operators';
+import { BackgroundEffectComponent } from '../components/background-effect/background-effect.component';
+import { AnimateOnEnterDirective } from '../../../shared/directives/animate-on-enter.directive';
 
 @Component({
   selector: 'app-dashboard',
@@ -46,13 +48,16 @@ import { switchMap } from 'rxjs/operators';
     MarineChartComponent,
     HistoricalChartComponent,
     MapFullComponent,
+    BackgroundEffectComponent,
+    AnimateOnEnterDirective,
   ],
   template: `
     <div
       class="min-h-screen transition-colors duration-300
-                bg-gradient-to-b from-tr-peach via-[#f9d9c4] to-tr-cream
-                dark:from-tr-dark-bg dark:via-tr-dark-bg dark:to-tr-dark-bg"
+   bg-gradient-to-b from-tr-peach/55 via-[#f9d9c4]/55 to-tr-cream/55
+   dark:from-tr-dark-sand/55 dark:via-tr-dark-card/55 dark:to-tr-dark-bg/55"
     >
+      <app-background-effect></app-background-effect>
       <div
         class="max-w-[1240px] mx-auto px-6 md:px-12 py-10 pb-16 relative z-10"
       >
@@ -207,24 +212,34 @@ import { switchMap } from 'rxjs/operators';
             <app-tab-bar
               [activeTab]="activeTab"
               (tabChanged)="onTabChanged($event)"
-            >
-            </app-tab-bar>
+            ></app-tab-bar>
           </div>
 
           <!-- ABA: Clima -->
           <div [hidden]="activeTab !== 'clima'">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-7">
-              <app-weather-map [data]="weatherData"></app-weather-map>
+              <app-weather-map
+                [animateOnEnter]="animateTrigger"
+                [data]="weatherData"
+              ></app-weather-map>
               <app-current-conditions
+                [animateOnEnter]="animateTrigger"
                 [data]="weatherData"
                 [unit]="unit"
               ></app-current-conditions>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-[1.35fr_1fr] gap-7 mt-7">
-              <app-hourly-chart [data]="weatherData"></app-hourly-chart>
-              <app-aqi-card [data]="weatherData"></app-aqi-card>
+              <app-hourly-chart
+                [animateOnEnter]="animateTrigger"
+                [data]="weatherData"
+              ></app-hourly-chart>
+              <app-aqi-card
+                [animateOnEnter]="animateTrigger"
+                [data]="weatherData"
+              ></app-aqi-card>
             </div>
             <app-forecast-strip
+              [animateOnEnter]="animateTrigger"
               [data]="weatherData"
               [unit]="unit"
             ></app-forecast-strip>
@@ -235,12 +250,12 @@ import { switchMap } from 'rxjs/operators';
             <div
               *ngIf="loadingMarine"
               class="flex items-center justify-center py-32
-                        text-tr-ink-soft dark:text-tr-dark-soft"
+                text-tr-ink-soft dark:text-tr-dark-soft"
             >
               <div class="flex flex-col items-center gap-4">
                 <div
                   class="w-10 h-10 rounded-full border-2
-                            border-tr-sky border-t-transparent animate-spin"
+                    border-tr-sky border-t-transparent animate-spin"
                 ></div>
                 <span class="font-inter text-sm"
                   >Carregando dados do mar...</span
@@ -252,9 +267,13 @@ import { switchMap } from 'rxjs/operators';
               class="flex flex-col gap-7"
             >
               <app-marine-conditions
+                [animateOnEnter]="animateTrigger"
                 [data]="marineData"
               ></app-marine-conditions>
-              <app-marine-chart [data]="marineData"></app-marine-chart>
+              <app-marine-chart
+                [animateOnEnter]="animateTrigger"
+                [data]="marineData"
+              ></app-marine-chart>
             </div>
           </div>
 
@@ -263,18 +282,19 @@ import { switchMap } from 'rxjs/operators';
             <div
               *ngIf="loadingHistorical"
               class="flex items-center justify-center py-32
-                        text-tr-ink-soft dark:text-tr-dark-soft"
+                text-tr-ink-soft dark:text-tr-dark-soft"
             >
               <div class="flex flex-col items-center gap-4">
                 <div
                   class="w-10 h-10 rounded-full border-2
-                            border-tr-sage border-t-transparent animate-spin"
+                    border-tr-sage border-t-transparent animate-spin"
                 ></div>
                 <span class="font-inter text-sm">Carregando histórico...</span>
               </div>
             </div>
             <div *ngIf="!loadingHistorical && historicalData">
               <app-historical-chart
+                [animateOnEnter]="animateTrigger"
                 [data]="historicalData"
               ></app-historical-chart>
             </div>
@@ -282,21 +302,25 @@ import { switchMap } from 'rxjs/operators';
 
           <!-- ABA: Mapa -->
           <div [hidden]="activeTab !== 'mapa'">
-            <app-map-full [data]="weatherData"></app-map-full>
+            <app-map-full
+              [animateOnEnter]="animateTrigger"
+              [data]="weatherData"
+            ></app-map-full>
           </div>
 
           <!-- Footer -->
           <div
             class="flex justify-between items-center mt-8 px-2
-                      text-xs text-tr-ink-mute dark:text-tr-dark-mute"
+              text-xs text-tr-ink-mute dark:text-tr-dark-mute"
           >
             <span>TempoRadar v1.0 · Open-Meteo + Nominatim</span>
-            <a
+
+            <span
               (click)="loadByLocation()"
               class="text-tr-terra cursor-pointer hover:opacity-70 transition-opacity"
             >
               alterar localização
-            </a>
+            </span>
           </div>
         </div>
       </div>
@@ -307,6 +331,8 @@ export class DashboardComponent implements OnInit {
   weatherData: WeatherData | null = null;
   marineData: MarineData | null = null;
   historicalData: HistoricalSummary | null = null;
+
+  animateTrigger = 0;
 
   loading = true;
   loadingMarine = false;
@@ -392,6 +418,7 @@ export class DashboardComponent implements OnInit {
   }
 
   onTabChanged(tab: TabType): void {
+    this.animateTrigger++;
     this.activeTab = tab;
     localStorage.setItem('tr-active-tab', tab);
 
