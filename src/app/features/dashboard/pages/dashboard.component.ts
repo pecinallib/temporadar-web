@@ -312,7 +312,8 @@ export class DashboardComponent implements OnInit {
   loadingMarine = false;
   loadingHistorical = false;
 
-  activeTab: TabType = 'clima';
+  activeTab: TabType =
+    (localStorage.getItem('tr-active-tab') as TabType) || 'clima';
   unit: 'C' | 'F' = 'C';
   time = '';
   today = '';
@@ -346,7 +347,6 @@ export class DashboardComponent implements OnInit {
     this.loading = true;
     this.marineData = null;
     this.historicalData = null;
-    this.activeTab = 'clima';
 
     this.location
       .getLocation()
@@ -365,6 +365,9 @@ export class DashboardComponent implements OnInit {
         next: (data) => {
           this.weatherData = data;
           this.loading = false;
+          if (this.activeTab !== 'clima') {
+            this.onTabChanged(this.activeTab);
+          }
         },
         error: () => {
           this.loading = false;
@@ -376,7 +379,6 @@ export class DashboardComponent implements OnInit {
     this.loading = true;
     this.marineData = null;
     this.historicalData = null;
-    this.activeTab = 'clima';
 
     this.weather.getWeatherData(loc.lat, loc.lon, loc).subscribe({
       next: (data) => {
@@ -391,6 +393,7 @@ export class DashboardComponent implements OnInit {
 
   onTabChanged(tab: TabType): void {
     this.activeTab = tab;
+    localStorage.setItem('tr-active-tab', tab);
 
     setTimeout(() => {
       if (tab === 'clima' && this.weatherMap) {
