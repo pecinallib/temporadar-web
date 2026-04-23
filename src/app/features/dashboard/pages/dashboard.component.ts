@@ -50,8 +50,8 @@ import { switchMap } from 'rxjs/operators';
   template: `
     <div
       class="min-h-screen transition-colors duration-300
-                bg-gradient-to-b from-tr-peach via-[#f9d9c4] to-tr-cream
-                dark:from-tr-dark-bg dark:via-tr-dark-bg dark:to-tr-dark-bg"
+   bg-gradient-to-b from-tr-peach/55 via-[#f9d9c4]/55 to-tr-cream/55
+   dark:from-tr-dark-sand/55 dark:via-tr-dark-card/55 dark:to-tr-dark-bg/55"
     >
       <div
         class="max-w-[1240px] mx-auto px-6 md:px-12 py-10 pb-16 relative z-10"
