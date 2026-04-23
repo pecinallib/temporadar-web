@@ -130,16 +130,24 @@ export class MapFullComponent implements AfterViewInit, OnChanges, OnDestroy {
     }
   }
 
+  public refreshSize(): void {
+    if (this.map) {
+      this.map.invalidateSize(true);
+      this.map.setView(this.map.getCenter(), this.map.getZoom());
+    }
+  }
+
   private initMap(): void {
     this.map = L.map(this.mapContainer.nativeElement, {
       zoomControl: false,
       attributionControl: false,
       scrollWheelZoom: true,
+      maxZoom: 14,
     }).setView([-22.8791, -42.0232], 6);
 
     this.baseLayer = L.tileLayer(
       'https://tiles.stadiamaps.com/tiles/stamen_watercolor/{z}/{x}/{y}.jpg',
-      { maxZoom: 18 },
+      { maxZoom: 14 },
     ).addTo(this.map);
 
     this.addWeatherLayer();
@@ -156,10 +164,12 @@ export class MapFullComponent implements AfterViewInit, OnChanges, OnDestroy {
       nuvens: 'clouds_new',
     };
 
-    const key = layerMap[this.activeLayer];
+    const layer = layerMap[this.activeLayer];
+    const apiKey = '36ebf7cea6af7524b670dfeabb200368';
+
     this.weatherLayer = L.tileLayer(
-      `https://tile.openweathermap.org/map/${key}/{z}/{x}/{y}.png?appid=36ebf7cea6af7524b670dfeabb200368`,
-      { opacity: 0.5, maxZoom: 18 },
+      `https://tile.openweathermap.org/map/${layer}/{z}/{x}/{y}.png?appid=${apiKey}`,
+      { opacity: 0.6, maxZoom: 18 },
     ).addTo(this.map);
   }
 

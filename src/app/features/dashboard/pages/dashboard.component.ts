@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SearchBarComponent } from '../components/search-bar/search-bar.component';
 import { WeatherMapComponent } from '../components/weather-map/weather-map.component';
@@ -312,7 +312,8 @@ export class DashboardComponent implements OnInit {
   unit: 'C' | 'F' = 'C';
   time = '';
   today = '';
-
+  @ViewChild(WeatherMapComponent) weatherMap!: WeatherMapComponent;
+  @ViewChild(MapFullComponent) mapFull!: MapFullComponent;
   constructor(
     private weather: WeatherService,
     private location: LocationService,
@@ -377,7 +378,15 @@ export class DashboardComponent implements OnInit {
 
   onTabChanged(tab: TabType): void {
     this.activeTab = tab;
-    setTimeout(() => window.dispatchEvent(new Event('resize')), 200);
+
+    setTimeout(() => {
+      if (tab === 'clima' && this.weatherMap) {
+        this.weatherMap.refreshSize();
+      }
+      if (tab === 'mapa' && this.mapFull) {
+        this.mapFull.refreshSize();
+      }
+    }, 50);
 
     if (tab === 'marine' && !this.marineData && this.weatherData) {
       this.loadingMarine = true;

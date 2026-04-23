@@ -191,4 +191,11 @@ export class WeatherMapComponent
   zoomOut(): void {
     this.map?.zoomOut();
   }
+
+  public refreshSize(): void {
+    if (this.map) {
+      this.map.invalidateSize(true);
+      this.map.setView(this.map.getCenter(), this.map.getZoom());
+    }
+  }
 }
