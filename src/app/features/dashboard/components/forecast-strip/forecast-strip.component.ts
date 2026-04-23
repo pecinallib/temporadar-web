@@ -56,7 +56,7 @@ import { getWeatherInfo } from '../../../../core/services';
                 i === 0 ? 'text-tr-cream' : 'text-tr-ink dark:text-tr-dark-ink'
               "
             >
-              {{ day.tempMax }}°
+              {{ convert(day.tempMax) }}°
             </span>
 
             <!-- Temp min -->
@@ -68,7 +68,7 @@ import { getWeatherInfo } from '../../../../core/services';
                   : 'text-tr-ink-mute dark:text-tr-dark-mute'
               "
             >
-              Baixa {{ day.tempMin }}°
+              Baixa {{ convert(day.tempMin) }}°
             </span>
 
             <!-- Condição -->
@@ -102,6 +102,12 @@ import { getWeatherInfo } from '../../../../core/services';
 })
 export class ForecastStripComponent {
   @Input() data: WeatherData | null = null;
+  @Input() unit: 'C' | 'F' = 'C';
+
+  convert(celsius: number): number {
+    if (this.unit === 'F') return Math.round((celsius * 9) / 5 + 32);
+    return celsius;
+  }
 
   getInfo(code: number) {
     return getWeatherInfo(code);

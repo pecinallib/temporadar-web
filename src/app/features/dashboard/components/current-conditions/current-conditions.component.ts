@@ -14,13 +14,12 @@ import { getWeatherInfo } from '../../../../core/services';
                 border border-tr-ink/8 dark:border-tr-dark-ink/8
                 shadow-lg p-7 flex flex-col gap-5"
     >
-      <!-- Header -->
       <div class="flex justify-between items-start">
         <span
           class="text-[11px] tracking-widest uppercase
                      text-tr-ink-mute dark:text-tr-dark-mute font-medium"
         >
-          Temperatura Atual
+          Temperatura Atual · {{ unit === 'F' ? '°F' : '°C' }}
         </span>
         <div
           class="flex items-center gap-2 text-sm
@@ -35,13 +34,12 @@ import { getWeatherInfo } from '../../../../core/services';
         </div>
       </div>
 
-      <!-- Temperatura grande -->
       <div class="leading-none -mt-6 mb-6 flex items-start">
         <span
           class="font-playfair text-tr-ink dark:text-tr-dark-ink tracking-tight"
           style="font-size: 130px; line-height: 1;"
         >
-          {{ data.current.temperature }}
+          {{ convert(data.current.temperature) }}
         </span>
         <span
           class="font-playfair text-tr-terra mt-4"
@@ -51,7 +49,6 @@ import { getWeatherInfo } from '../../../../core/services';
         </span>
       </div>
 
-      <!-- Feels like + H/L -->
       <div
         class="flex items-center gap-4 text-sm -mt-4
                   text-tr-ink-soft dark:text-tr-dark-soft"
@@ -59,28 +56,26 @@ import { getWeatherInfo } from '../../../../core/services';
         <span>
           Sensação
           <b class="text-tr-ink dark:text-tr-dark-ink font-medium">
-            {{ data.current.feelsLike }}°
+            {{ convert(data.current.feelsLike) }}°
           </b>
         </span>
         <span class="flex gap-3">
           <span
             >H
             <b class="text-tr-ink dark:text-tr-dark-ink font-medium">
-              {{ data.daily[0].tempMax }}°
+              {{ convert(data.daily[0].tempMax) }}°
             </b></span
           >
           <span
             >L
             <b class="text-tr-ink dark:text-tr-dark-ink font-medium">
-              {{ data.daily[0].tempMin }}°
+              {{ convert(data.daily[0].tempMin) }}°
             </b></span
           >
         </span>
       </div>
 
-      <!-- Pills de métricas -->
       <div class="grid grid-cols-2 gap-2.5">
-        <!-- Humidity -->
         <div
           class="flex items-center gap-3 px-4 py-3 rounded-full
                     bg-tr-sky-card dark:bg-tr-dark-sky"
@@ -95,12 +90,10 @@ import { getWeatherInfo } from '../../../../core/services';
             <small
               class="text-[10.5px] tracking-widest uppercase
                           text-tr-ink-soft dark:text-tr-dark-soft font-medium"
+              >UMIDADE</small
             >
-              UMIDADE
-            </small>
             <span
-              class="font-playfair text-[22px] font-medium
-                         text-tr-ink dark:text-tr-dark-ink"
+              class="font-playfair text-[22px] font-medium text-tr-ink dark:text-tr-dark-ink"
             >
               {{ data.current.humidity
               }}<i
@@ -112,7 +105,6 @@ import { getWeatherInfo } from '../../../../core/services';
           </div>
         </div>
 
-        <!-- Wind -->
         <div
           class="flex items-center gap-3 px-4 py-3 rounded-full
                     bg-tr-sand dark:bg-tr-dark-sand"
@@ -127,12 +119,10 @@ import { getWeatherInfo } from '../../../../core/services';
             <small
               class="text-[10.5px] tracking-widest uppercase
                           text-tr-ink-soft dark:text-tr-dark-soft font-medium"
+              >VENTO</small
             >
-              VENTO
-            </small>
             <span
-              class="font-playfair text-[22px] font-medium
-                         text-tr-ink dark:text-tr-dark-ink"
+              class="font-playfair text-[22px] font-medium text-tr-ink dark:text-tr-dark-ink"
             >
               {{ data.current.windSpeed
               }}<i
@@ -144,7 +134,6 @@ import { getWeatherInfo } from '../../../../core/services';
           </div>
         </div>
 
-        <!-- UV Index -->
         <div
           class="flex items-center gap-3 px-4 py-3 rounded-full
                     bg-[#e1ead9] dark:bg-tr-dark-sky"
@@ -159,19 +148,16 @@ import { getWeatherInfo } from '../../../../core/services';
             <small
               class="text-[10.5px] tracking-widest uppercase
                           text-tr-ink-soft dark:text-tr-dark-soft font-medium"
+              >ÍNDICE UV</small
             >
-              ÍNDICE UV
-            </small>
             <span
-              class="font-playfair text-[22px] font-medium
-                         text-tr-ink dark:text-tr-dark-ink"
+              class="font-playfair text-[22px] font-medium text-tr-ink dark:text-tr-dark-ink"
             >
               {{ data.current.uvIndex }}
             </span>
           </div>
         </div>
 
-        <!-- Visibility -->
         <div
           class="flex items-center gap-3 px-4 py-3 rounded-full
                     bg-[#f3d9cc] dark:bg-tr-dark-sand"
@@ -186,12 +172,10 @@ import { getWeatherInfo } from '../../../../core/services';
             <small
               class="text-[10.5px] tracking-widest uppercase
                           text-tr-ink-soft dark:text-tr-dark-soft font-medium"
+              >VISIBILIDADE</small
             >
-              VISIBILIDADE
-            </small>
             <span
-              class="font-playfair text-[22px] font-medium
-                         text-tr-ink dark:text-tr-dark-ink"
+              class="font-playfair text-[22px] font-medium text-tr-ink dark:text-tr-dark-ink"
             >
               {{ data.current.visibility
               }}<i
@@ -208,10 +192,16 @@ import { getWeatherInfo } from '../../../../core/services';
 })
 export class CurrentConditionsComponent {
   @Input() data: WeatherData | null = null;
+  @Input() unit: 'C' | 'F' = 'C';
 
   get weatherInfo() {
     return this.data
       ? getWeatherInfo(this.data.current.weatherCode)
       : { label: '', icon: '' };
+  }
+
+  convert(celsius: number): number {
+    if (this.unit === 'F') return Math.round((celsius * 9) / 5 + 32);
+    return celsius;
   }
 }

@@ -217,13 +217,17 @@ import { switchMap } from 'rxjs/operators';
               <app-weather-map [data]="weatherData"></app-weather-map>
               <app-current-conditions
                 [data]="weatherData"
+                [unit]="unit"
               ></app-current-conditions>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-[1.35fr_1fr] gap-7 mt-7">
               <app-hourly-chart [data]="weatherData"></app-hourly-chart>
               <app-aqi-card [data]="weatherData"></app-aqi-card>
             </div>
-            <app-forecast-strip [data]="weatherData"></app-forecast-strip>
+            <app-forecast-strip
+              [data]="weatherData"
+              [unit]="unit"
+            ></app-forecast-strip>
           </div>
 
           <!-- ABA: Marine -->
@@ -322,6 +326,15 @@ export class DashboardComponent implements OnInit {
     private historical: HistoricalService,
     public theme: ThemeService,
   ) {}
+
+  convertTemp(celsius: number): number {
+    if (this.unit === 'F') return Math.round((celsius * 9) / 5 + 32);
+    return celsius;
+  }
+
+  get unitSymbol(): string {
+    return this.unit === 'F' ? '°F' : '°C';
+  }
 
   ngOnInit(): void {
     this.updateClock();
