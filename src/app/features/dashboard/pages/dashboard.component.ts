@@ -296,6 +296,8 @@ import { AnimateOnEnterDirective } from '../../../shared/directives/animate-on-e
               <app-historical-chart
                 [animateOnEnter]="animateTrigger"
                 [data]="historicalData"
+                [lat]="weatherData ? weatherData.location.lat : 0"
+                [lon]="weatherData ? weatherData.location.lon : 0"
               ></app-historical-chart>
             </div>
           </div>
