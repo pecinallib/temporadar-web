@@ -11,6 +11,7 @@ import {
 import { CommonModule } from '@angular/common';
 import * as L from 'leaflet';
 import { WeatherData } from '../../../../core/models';
+import { environment } from '../../../../../environments/environment';
 
 type MapLayer = 'temperatura' | 'chuva' | 'vento' | 'nuvens';
 
@@ -165,7 +166,7 @@ export class MapFullComponent implements AfterViewInit, OnChanges, OnDestroy {
     };
 
     const layer = layerMap[this.activeLayer];
-    const apiKey = '36ebf7cea6af7524b670dfeabb200368';
+    const apiKey = environment.owmApiKey;
 
     this.weatherLayer = L.tileLayer(
       `https://tile.openweathermap.org/map/${layer}/{z}/{x}/{y}.png?appid=${apiKey}`,
