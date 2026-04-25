@@ -1,11 +1,13 @@
 const fs = require("fs");
 const path = require("path");
 
-const key = process.env.OWM_API_KEY ?? "";
+const owmKey = process.env.OWM_API_KEY ?? "";
+const stadiaKey = process.env.STADIA_API_KEY ?? "";
 
 const content = `export const environment = {
   production: true,
-  owmApiKey: '${key}',
+  owmApiKey: '${owmKey}',
+  stadiaApiKey: '${stadiaKey}',
 };
 `;
 

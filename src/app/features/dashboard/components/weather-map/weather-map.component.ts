@@ -12,6 +12,7 @@ import { CommonModule } from '@angular/common';
 import * as L from 'leaflet';
 import { WeatherData } from '../../../../core/models';
 import { getWeatherInfo } from '../../../../core/services';
+import { environment } from '../../../../../environments/environment';
 
 @Component({
   selector: 'app-weather-map',
@@ -129,7 +130,7 @@ export class WeatherMapComponent
     }).setView([-22.8791, -42.0232], 10);
 
     L.tileLayer(
-      'https://tiles.stadiamaps.com/tiles/stamen_watercolor/{z}/{x}/{y}.jpg',
+      `https://tiles.stadiamaps.com/tiles/stamen_watercolor/{z}/{x}/{y}.jpg?api_key=${environment.stadiaApiKey}`,
       {
         maxZoom: 18,
       },

@@ -169,7 +169,7 @@ export class MapFullComponent implements AfterViewInit, OnChanges, OnDestroy {
     const apiKey = environment.owmApiKey;
 
     this.weatherLayer = L.tileLayer(
-      `https://tile.openweathermap.org/map/${layer}/{z}/{x}/{y}.png?appid=${apiKey}`,
+      `https://tiles.stadiamaps.com/tiles/stamen_watercolor/{z}/{x}/{y}.jpg?api_key=${environment.stadiaApiKey}`,
       { opacity: 0.6, maxZoom: 18 },
     ).addTo(this.map);
   }
