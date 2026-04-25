@@ -147,7 +147,7 @@ export class MapFullComponent implements AfterViewInit, OnChanges, OnDestroy {
     }).setView([-22.8791, -42.0232], 6);
 
     this.baseLayer = L.tileLayer(
-      'https://tiles.stadiamaps.com/tiles/stamen_watercolor/{z}/{x}/{y}.jpg',
+      `https://tiles.stadiamaps.com/tiles/stamen_watercolor/{z}/{x}/{y}.jpg?api_key=${environment.stadiaApiKey}`,
       { maxZoom: 14 },
     ).addTo(this.map);
 
@@ -169,7 +169,7 @@ export class MapFullComponent implements AfterViewInit, OnChanges, OnDestroy {
     const apiKey = environment.owmApiKey;
 
     this.weatherLayer = L.tileLayer(
-      `https://tiles.stadiamaps.com/tiles/stamen_watercolor/{z}/{x}/{y}.jpg?api_key=${environment.stadiaApiKey}`,
+      `https://tile.openweathermap.org/map/${layer}/{z}/{x}/{y}.png?appid=${apiKey}`,
       { opacity: 0.6, maxZoom: 18 },
     ).addTo(this.map);
   }
