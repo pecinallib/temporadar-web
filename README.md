@@ -155,7 +155,6 @@ ng build --configuration=production
 ## 🗺️ Roadmap
 
 - [ ] Deploy na Vercel
-- [ ] Backend `temporadar-api` (NestJS + Redis, cache de requisições)
 - [ ] Modo offline com Service Worker
 - [ ] Alertas climáticos em tempo real
 - [ ] Comparação entre duas cidades
