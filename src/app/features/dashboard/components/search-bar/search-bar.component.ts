@@ -25,8 +25,8 @@ import { Location } from '../../../../core/models';
           (ngModelChange)="onQueryChange($event)"
           placeholder="Buscar cidade..."
           class="flex-1 bg-transparent outline-none text-sm
-                 text-gray-700 dark:text-tr-cream
-                 placeholder-gray-400 dark:placeholder-gray-500
+                 text-gray-700
+                 placeholder-gray-400
                  font-inter"
         />
         <button
@@ -50,7 +50,7 @@ import { Location } from '../../../../core/models';
           *ngFor="let result of results"
           (click)="selectLocation(result)"
           class="px-4 py-3 cursor-pointer text-sm
-                   text-gray-700 dark:text-tr-cream
+                   text-gray-700
                    hover:bg-tr-peach/20 dark:hover:bg-tr-terra/20
                    transition-colors font-inter"
         >
